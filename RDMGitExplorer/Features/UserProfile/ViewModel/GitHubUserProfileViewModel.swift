@@ -14,10 +14,10 @@ class GitHubUserProfileViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    private let apiService: GitHubAPIService
+    private let apiService: GitHubAPIServiceProtocol
     let username: String
     
-    init(username: String, apiService: GitHubAPIService = GitHubAPIService()) {
+    init(username: String, apiService: GitHubAPIServiceProtocol = GitHubAPIService()) {
         self.username = username
         self.apiService = apiService
     }
@@ -30,7 +30,6 @@ class GitHubUserProfileViewModel: ObservableObject {
             isLoading = true
             errorMessage = nil
             user = .mock
-            await simulateLoading()
             do {
                 let fetchedUser = try await apiService.fetchUser(username: username)
                 user = fetchedUser
@@ -40,12 +39,5 @@ class GitHubUserProfileViewModel: ObservableObject {
             }
         }
     }
-    private func simulateLoading() async {
-            do {
-                let randomDelay = Double.random(in: 1.5...2)
-                try await Task.sleep(nanoseconds: UInt64(randomDelay * 2_000_000_000))
-            } catch {
-                print("Sleep interrupted: \(error)")
-            }
-        }
+
 }

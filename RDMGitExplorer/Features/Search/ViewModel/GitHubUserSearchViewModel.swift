@@ -15,10 +15,10 @@ final class GitHubUserSearchViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
 
-    private let apiService: GitHubAPIService
+    private let apiService: GitHubAPIServiceProtocol
     private var cancellables = Set<AnyCancellable>()
 
-    init(apiService: GitHubAPIService = GitHubAPIService()) {
+    init(apiService: GitHubAPIServiceProtocol = GitHubAPIService()) {
         self.apiService = apiService
     }
 

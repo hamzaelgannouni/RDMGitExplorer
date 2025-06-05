@@ -9,7 +9,6 @@ import SwiftUI
 
 @main
 struct RDMGitExplorerApp: App {
-    
     var body: some Scene {
         WindowGroup {
             GitHubUserSearchView()

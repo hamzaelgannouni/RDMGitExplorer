@@ -12,12 +12,14 @@ struct GitHubUserDetailView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            AsyncImage(url: user.avatarUrl) { phase in
-                if let image = phase.image {
-                    image
-                        .resizable()
-                        .scaledToFill()
-                } else {
+            CachedAsyncImage(
+                url: user.avatarUrl
+            ) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable()
+                         .scaledToFill()
+                case .empty, .failure(_), _:
                     Image(systemName: "person.circle.fill")
                         .resizable()
                         .foregroundColor(.gray)
