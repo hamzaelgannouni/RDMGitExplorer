@@ -36,9 +36,13 @@ struct GitHubUserListView: View {
             ScrollView {
                 LazyVStack(spacing: 12) {
                     ForEach(viewModel.users) { user in
-                        GitHubUserPreviewView(user: user)
-                            .redacted(reason: viewModel.isLoading ? .placeholder : [])
-                            .padding(.horizontal)
+                        NavigationLink {
+                            GitHubUserProfileView(username: user.login)
+                        } label: {
+                            GitHubUserPreviewView(user: user)
+                                .redacted(reason: viewModel.isLoading ? .placeholder : [])
+                                .padding(.horizontal)
+                        }
                     }
                 }
                 .padding(.top)
