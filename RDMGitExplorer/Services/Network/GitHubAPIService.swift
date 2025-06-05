@@ -7,29 +7,41 @@
 
 import Foundation
 
-struct GitHubAPIService {
+struct GitHubAPIService: GitHubAPIServiceProtocol {
     private let session: URLSessionProtocol
     private let baseURL = "https://api.github.com"
+    private let cache = GitHubCacheService.shared
 
     init(session: URLSessionProtocol = URLSession.shared) {
         self.session = session
     }
 
-    // MARK: - Public API
-
     func fetchUser(username: String) async throws -> GitHubUser {
-        try await fetch(endpoint: "users/\(username)")
+        if let cached = cache.getUser(for: username) {
+            return cached
+        }
+        let user: GitHubUser = try await fetch(endpoint: "users/\(username)")
+        cache.cacheUser(user)
+        return user
     }
 
     func fetchFollowers(username: String) async throws -> [GitHubUserPreview] {
-        try await fetch(endpoint: "users/\(username)/followers")
+        if let cached = cache.getFollowers(for: username) {
+            return cached
+        }
+        let followers: [GitHubUserPreview] = try await fetch(endpoint: "users/\(username)/followers")
+        cache.cacheFollowers(followers, for: username)
+        return followers
     }
 
     func fetchFollowing(username: String) async throws -> [GitHubUserPreview] {
-        try await fetch(endpoint: "users/\(username)/following")
+        if let cached = cache.getFollowing(for: username) {
+            return cached
+        }
+        let following: [GitHubUserPreview] = try await fetch(endpoint: "users/\(username)/following")
+        cache.cacheFollowing(following, for: username)
+        return following
     }
-
-    // MARK: - Generic Fetch Method
 
     private func fetch<T: Decodable>(endpoint: String) async throws -> T {
         guard let url = URL(string: "\(baseURL)/\(endpoint)") else {
@@ -44,13 +56,9 @@ struct GitHubAPIService {
 
         switch httpResponse.statusCode {
         case 200:
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                return try decoder.decode(T.self, from: data)
-            } catch {
-                throw GitHubAPIError.decodingFailed
-            }
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            return try decoder.decode(T.self, from: data)
         case 404:
             throw GitHubAPIError.userNotFound
         default:

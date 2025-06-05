@@ -14,11 +14,11 @@ class GitHubUserListViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    private let apiService: GitHubAPIService
+    private let apiService: GitHubAPIServiceProtocol
     private let username: String
     let listType: UserListType
 
-    init(username: String, listType: UserListType, apiService: GitHubAPIService = GitHubAPIService()) {
+    init(username: String, listType: UserListType, apiService: GitHubAPIServiceProtocol = GitHubAPIService()) {
         self.username = username
         self.listType = listType
         self.apiService = apiService
@@ -32,7 +32,6 @@ class GitHubUserListViewModel: ObservableObject {
                 isLoading = false
             }
             users = GitHubUserPreview.mockList
-            await simulateLoading()
             do {
                 switch listType {
                 case .followers:
@@ -46,12 +45,4 @@ class GitHubUserListViewModel: ObservableObject {
             }
         }
     }
-    private func simulateLoading() async {
-            do {
-                let randomDelay = Double.random(in: 1.5...2)
-                try await Task.sleep(nanoseconds: UInt64(randomDelay * 2_000_000_000))
-            } catch {
-                print("Sleep interrupted: \(error)")
-            }
-        }
 }
