@@ -24,12 +24,23 @@ struct GitHubAPIService {
         let (data, response) = try await session.data(from: url)
         
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw GitHubAPIError.unknown
-        }
-        
-        guard (200..<300).contains(httpResponse.statusCode) else {
-            throw GitHubAPIError.requestFailed(httpResponse.statusCode)
-        }
+                throw GitHubAPIError.unknown
+            }
+
+            switch httpResponse.statusCode {
+            case 200:
+                do {
+                    let decoder = JSONDecoder()
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    return try decoder.decode(GitHubUser.self, from: data)
+                } catch {
+                    throw GitHubAPIError.decodingFailed
+                }
+            case 404:
+                throw GitHubAPIError.userNotFound
+            default:
+                throw GitHubAPIError.requestFailed(httpResponse.statusCode)
+            }
         
         do {
             let decoder = JSONDecoder()

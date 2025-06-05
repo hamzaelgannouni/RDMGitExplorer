@@ -11,7 +11,7 @@ enum GitHubAPIError: Error, LocalizedError {
     case invalidURL
     case requestFailed(Int)
     case decodingFailed
-    case notFound
+    case userNotFound
     case rateLimited
     case unknown
 
@@ -23,8 +23,8 @@ enum GitHubAPIError: Error, LocalizedError {
             return "Request failed with status code \(code)."
         case .decodingFailed:
             return "Could not decode the response."
-        case .notFound:
-            return "User not found."
+        case .userNotFound:
+            return "Non trouvé"
         case .rateLimited:
             return "Rate limit exceeded. Please wait and try again."
         case .unknown:
