@@ -32,6 +32,7 @@ class GitHubUserListViewModel: ObservableObject {
                 isLoading = false
             }
             users = GitHubUserPreview.mockList
+            await simulateLoading()
             do {
                 switch listType {
                 case .followers:
@@ -45,4 +46,12 @@ class GitHubUserListViewModel: ObservableObject {
             }
         }
     }
+    private func simulateLoading() async {
+            do {
+                let randomDelay = Double.random(in: 1.5...2)
+                try await Task.sleep(nanoseconds: UInt64(randomDelay * 2_000_000_000))
+            } catch {
+                print("Sleep interrupted: \(error)")
+            }
+        }
 }
