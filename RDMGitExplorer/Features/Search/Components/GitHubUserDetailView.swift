@@ -12,22 +12,7 @@ struct GitHubUserDetailView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            CachedAsyncImage(
-                url: user.avatarUrl
-            ) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable()
-                         .scaledToFill()
-                case .empty, .failure(_), _:
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .foregroundColor(.gray)
-                }
-            }
-            .frame(width: 100, height: 100)
-            .clipShape(Circle())
-            .shadow(radius: 4)
+            ProfileImageView(url: user.avatarUrl, size: 100)
             
             Text(user.name ?? "No name")
                 .font(.title2)
@@ -44,34 +29,28 @@ struct GitHubUserDetailView: View {
             }
             
             HStack(spacing: 24) {
-                VStack {
-                    Text("\(user.followers)")
-                        .font(.headline)
-                    NavigationLink {
-                        GitHubUserListView(username: user.login, listType: .followers)
-                    } label: {
-                        Text("Followers")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                
-                VStack {
-                    Text("\(user.following)")
-                        .font(.headline)
-                    NavigationLink {
-                        GitHubUserListView(username: user.login, listType: .following)
-                    } label: {
-                        Text("Following")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
+                StatBlock(count: user.followers, label: "Followers", destination: .followers)
+                StatBlock(count: user.following, label: "Following", destination: .following)
             }
             .padding(.top)
             
             Spacer()
         }
         .padding()
+    }
+    
+    @ViewBuilder
+    private func StatBlock(count: Int, label: String, destination: UserListType) -> some View {
+        VStack {
+            Text("\(count)")
+                .font(.headline)
+            NavigationLink {
+                GitHubUserListView(username: user.login, listType: destination)
+            } label: {
+                Text(label)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
     }
 }

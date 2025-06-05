@@ -48,7 +48,10 @@ struct GitHubAPIService: GitHubAPIServiceProtocol {
             throw GitHubAPIError.invalidURL
         }
 
-        let (data, response) = try await session.data(from: url)
+        var request = URLRequest(url: url)
+        request.setValue("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", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await session.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw GitHubAPIError.unknown
@@ -65,4 +68,5 @@ struct GitHubAPIService: GitHubAPIServiceProtocol {
             throw GitHubAPIError.requestFailed(httpResponse.statusCode)
         }
     }
+
 }
