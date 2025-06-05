@@ -17,3 +17,15 @@ struct GitHubUser: Decodable, Identifiable {
     let following: Int
 }
 
+extension GitHubUser {
+    static let mock = GitHubUser(
+        id: 1,
+        login: "octocat",
+        avatarUrl: URL(string: "https://avatars.githubusercontent.com/u/583231?v=4")!,
+        name: "The Octocat",
+        bio: "GitHub's official mascot. I love open source!",
+        followers: 1234,
+        following: 42
+    )
+}
+
