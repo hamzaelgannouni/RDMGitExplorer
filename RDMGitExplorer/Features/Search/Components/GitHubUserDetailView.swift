@@ -12,23 +12,8 @@ struct GitHubUserDetailView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            CachedAsyncImage(
-                url: user.avatarUrl
-            ) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable()
-                         .scaledToFill()
-                case .empty, .failure(_), _:
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .foregroundColor(.gray)
-                }
-            }
-            .frame(width: 100, height: 100)
-            .clipShape(Circle())
-            .shadow(radius: 4)
-            
+            ProfileImageView(url: user.avatarUrl, size: 100)
+
             Text(user.name ?? "No name")
                 .font(.title2)
                 .fontWeight(.semibold)

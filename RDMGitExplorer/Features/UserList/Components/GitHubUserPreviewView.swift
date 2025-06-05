@@ -12,7 +12,7 @@ struct GitHubUserPreviewView: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            avatarView
+            ProfileImageView(url: user.avatarUrl, size: 50)
             Text("@\(user.login)")
                 .foregroundColor(.secondary)
             Spacer()
@@ -26,24 +26,4 @@ struct GitHubUserPreviewView: View {
         )
         .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
     }
-    
-    var avatarView: some View {
-        CachedAsyncImage(
-            url: user.avatarUrl
-        ) { phase in
-            switch phase {
-            case .success(let image):
-                image.resizable()
-                     .scaledToFill()
-            case .empty, .failure(_), _:
-                Image(systemName: "person.circle.fill")
-                    .resizable()
-                    .foregroundColor(.gray)
-            }
-        }
-        .frame(width: 50, height: 50)
-        .clipShape(Circle())
-        .shadow(radius: 4)
-    }
-    
 }

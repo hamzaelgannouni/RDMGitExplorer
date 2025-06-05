@@ -39,23 +39,7 @@ struct GitHubUserProfileView: View {
     @ViewBuilder
     func profileContent(user: GitHubUser) -> some View {
         VStack(spacing: 16) {
-            CachedAsyncImage(
-                url: user.avatarUrl
-            ) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable()
-                         .scaledToFill()
-                case .empty, .failure(_), _:
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .foregroundColor(.gray)
-                }
-            }
-            .frame(width: 120, height: 120)
-            .clipShape(Circle())
-            .shadow(radius: 8)
-            
+            ProfileImageView(url: user.avatarUrl, size: 120)
             Text(user.name ?? user.login)
                 .font(.title)
                 .fontWeight(.bold)
